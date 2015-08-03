@@ -12,9 +12,16 @@ function indent() {
 
 unset GIT_DIR
 
+declare -a dirs
+cleanup() {
+  rm -fr "${dirs[@]}"
+}
+trap cleanup EXIT
+
 for BUILDPACK in $(cat $1/.buildpacks); do
   dir=$(mktemp -t buildpackXXXXX)
   rm -rf $dir
+  dirs[${#dirs[*]}]="${dir}"
 
   url=${BUILDPACK%#*}
   branch=${BUILDPACK#*#}
